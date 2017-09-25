@@ -1,5 +1,6 @@
 package edu.kvcc.cis298.cis298inclass1;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,7 @@ public class QuizActivity extends AppCompatActivity {
     private Button mTrueButton;
     private Button mFalseButton;
     private Button mNextButton;
+    private Button mCheatButton;
     private TextView mQuestionTextView;
 
     //Array of questions. We send over the resource if from R.java
@@ -122,6 +124,27 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View view) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
                 updateQuestion();
+            }
+        });
+
+        mCheatButton = (Button)findViewById(R.id.cheat_button);
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Get the answer to the current question
+                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+
+                //To get the intent that we need to start up the Cheat Activity
+                //we call the newIntent methoes on the Cheat Activity. Tha
+                //method returns us an Intent that is ready to start the new
+                //activity
+                Intent intent = CheatActivity.newIntent(QuizActivity.this, answerIsTrue);
+
+                //To start up a new activity we then call startActvity
+                //with the intent as a parameter/ The intent is used but the OF
+                //to determine what activity to start up
+                //Activities are started but the OF. Not by the App
+                startActivity(intent);
             }
         });
     }
