@@ -1,5 +1,6 @@
 package edu.kvcc.cis298.cis298inclass1;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,8 +16,15 @@ public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
 
     //This will be used as the key in a key => value object
-    //called the Bundle to save information between screem rotatins
+    //called the Bundle to save information between screen rotations
     private static final String KEY_INDEX = "index";
+
+    //Declare a request code integer that can be sent with the
+    //startActivityForResult method. This way when we return
+    //to this activity we can check this request code to see iff
+    //it is the one that matched the one we sent when we started
+    //the cheat activity
+    private static final int REQUEST_CODE_CHEAT = 0;
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -43,6 +51,9 @@ public class QuizActivity extends AppCompatActivity {
     //Index of the current question we are on.
     private int mCurrentIndex = 0;
 
+    //Class level variable to know whether the person used the cheat activity
+    private boolean mIsCheater;
+
     //Method that will be used to update the questions
     private void updateQuestion() {
         //Get the questions from the array. This will be an integer since
@@ -59,16 +70,21 @@ public class QuizActivity extends AppCompatActivity {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
         //Declare an int to hold the string resource id from the answer
         int messageResId = 0;
-        //If the questions answer and user Pressing True are equal
-        //They got it right. Correct answers will be when both variables
-        //are the same. If they are different it is wrong
-        //Set the messageResId once we determine what to set it to
-        if(userPressedButton == answerIsTrue) {
-            messageResId = R.string.correct_toast;
-        } else {
-            messageResId = R.string.incorrect_toast;
-        }
 
+        //First check to see if the user cheated
+        if (mIsCheater) {
+            messageResId = R.string.judgement_toast;
+        } else {
+            //If the questions answer and user Pressing True are equal
+            //They got it right. Correct answers will be when both variables
+            //are the same. If they are different it is wrong
+            //Set the messageResId once we determine what to set it to
+            if (userPressedButton == answerIsTrue) {
+                messageResId = R.string.correct_toast;
+            } else {
+                messageResId = R.string.incorrect_toast;
+            }
+        }
         //Make the toast
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
     }
@@ -123,6 +139,9 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                //Reset the cheater bool
+                mIsCheater = false;
+                //Update the question
                 updateQuestion();
             }
         });
@@ -135,7 +154,7 @@ public class QuizActivity extends AppCompatActivity {
                 boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
 
                 //To get the intent that we need to start up the Cheat Activity
-                //we call the newIntent methoes on the Cheat Activity. Tha
+                //we call the newIntent methods on the Cheat Activity. Tha
                 //method returns us an Intent that is ready to start the new
                 //activity
                 Intent intent = CheatActivity.newIntent(QuizActivity.this, answerIsTrue);
@@ -144,12 +163,35 @@ public class QuizActivity extends AppCompatActivity {
                 //with the intent as a parameter/ The intent is used but the OF
                 //to determine what activity to start up
                 //Activities are started but the OF. Not by the App
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_CHEAT);
             }
         });
     }
 
-    //Used for saving information for the app
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //If something went wrong in the other activity and the result
+        //code is not OK, we can just return. No need to do any work
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        //Check the Request Code and see which one it is
+        //Since we only have 1 other activity. Safe to say its going
+        //to be that one. But in the event we had more activities
+        //we would want to know which one we are returning from
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            //Check to see if the return data (Intent) is null for some reason
+            if (data == null) {
+                return;
+            }
+            //Everything checks out. We can safely pull out the data we need
+            //We will use the static method on the Cheat class to 'decode' the
+            //returned data and tell us if the person cheated or not
+            mIsCheater = CheatActivity.wasAnswerShown(data);
+        }
+    }
+
+    //Used for saving information for the app after screen rotation
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
