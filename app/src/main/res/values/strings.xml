@@ -46,6 +46,6 @@
     <string name="question_2_choice_3">Logic</string>
     <string name="question_2_choice_4">Religion</string>
 
-
+    <string name="no_answer_selected">No Answer Was Selected</string>
 
 </resources>

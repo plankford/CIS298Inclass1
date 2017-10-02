@@ -133,7 +133,7 @@ public class QuizActivity extends AppCompatActivity {
                 //See if the user selected a radio button
                 if (selectedAnswerId == -1) {
                     //Toast not selected
-                    Toast.makeText(QuizActivity.this, R.string.app_name,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(QuizActivity.this, R.string.no_answer_selected,Toast.LENGTH_SHORT).show();
                 } else {
                     //Call checkAnswer sending in the selectedAnswerId
                     checkAnswer(selectedAnswerId);
