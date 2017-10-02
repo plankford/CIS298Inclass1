@@ -10,11 +10,15 @@ public class Question {
     //in the R.java file that points to the string resource in strings.xml
     //for the text of this particular question
     private int mTextResId;
-    private boolean mAnswerTrue;
+    //Resource id of the correct answer radio button
+    private int mCorrectAnswerResId;
+    //Resource id of all of the possible answers for the questions
+    private int[] mChoiceResIds;
 
-    public Question(int textResId, boolean answerIsTrue)  {
+    public Question(int textResId, int correctAnswerResId, int[] choiceResIds)  {
         mTextResId = textResId;
-        mAnswerTrue = answerIsTrue;
+        mCorrectAnswerResId = correctAnswerResId;
+        mChoiceResIds = choiceResIds;
     }
 
     public int getTextResId() {
@@ -25,11 +29,19 @@ public class Question {
         mTextResId = textResId;
     }
 
-    public boolean isAnswerTrue() {
-        return mAnswerTrue;
+    public int getCorrectAnswerResId() {
+        return mCorrectAnswerResId;
     }
 
-    public void setAnswerTrue(boolean answerTrue) {
-        mAnswerTrue = answerTrue;
+    public void setCorrectAnswerResId(int correctAnswerResId) {
+        mCorrectAnswerResId = correctAnswerResId;
+    }
+
+    public int[] getChoiceResIds() {
+        return mChoiceResIds;
+    }
+
+    public void setChoiceResIds(int[] choiceResIds) {
+        mChoiceResIds = choiceResIds;
     }
 }
