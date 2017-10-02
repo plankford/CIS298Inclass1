@@ -68,6 +68,9 @@ public class QuizActivity extends AppCompatActivity {
         mChoice2.setText(choices[1]);
         mChoice3.setText(choices[2]);
         mChoice4.setText(choices[3]);
+
+        //Reset the RadioGroup so that no radio buttons are selected
+        mQuestionGroup.clearCheck();
     }
 
     private void checkAnswer(int selectedRadioButtonId) {
@@ -127,8 +130,16 @@ public class QuizActivity extends AppCompatActivity {
                 //id of the widget control.
                 int selectedAnswerId = mQuestionGroup.getCheckedRadioButtonId();
 
-                //Call checkAnswer sending in the selectedAnswerId
-                checkAnswer(selectedAnswerId);
+                //See if the user selected a radio button
+                if (selectedAnswerId == -1) {
+                    //Toast not selected
+                    Toast.makeText(QuizActivity.this, R.string.app_name,Toast.LENGTH_SHORT).show();
+                } else {
+                    //Call checkAnswer sending in the selectedAnswerId
+                    checkAnswer(selectedAnswerId);
+                }
+
+
             }
         });
 
@@ -137,6 +148,7 @@ public class QuizActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+
                 updateQuestion();
             }
         });
